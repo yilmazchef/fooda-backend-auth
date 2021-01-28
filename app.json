@@ -1,0 +1,6 @@
+{
+  "name": "Fooda Authorization API",
+  "description": "Auth Module.",
+  "website": "https://github.com/yilmazchef/fooda-backend-auth",
+  "success_url": "/"
+}
