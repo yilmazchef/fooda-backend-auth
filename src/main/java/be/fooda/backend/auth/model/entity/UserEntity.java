@@ -9,17 +9,19 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Set;
+import java.util.UUID;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Data
 @NoArgsConstructor
 @Entity
-public class FoodaUser {
+public class UserEntity {
 
     @EqualsAndHashCode.Include
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
     @EqualsAndHashCode.Include
     @Column(unique = true)
@@ -29,6 +31,10 @@ public class FoodaUser {
 
     private Boolean isActive = Boolean.TRUE;
 
+    private String validationCode;
+
+    private LocalDateTime validationExpiry = LocalDateTime.now().plusHours(2);
+
     private Boolean isAuthenticated = Boolean.FALSE;
 
     @CreationTimestamp
@@ -37,8 +43,8 @@ public class FoodaUser {
     @UpdateTimestamp
     private LocalDateTime lastUpdated;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(targetClass = RoleEntity.class, fetch = FetchType.EAGER)
     @CollectionTable
     @Enumerated(EnumType.STRING)
-    private Set<FoodaRole> roles;
+    private Set<RoleEntity> roles;
 }
