@@ -29,13 +29,13 @@ public class UserEntity {
 
     private String password;
 
-    private Boolean isActive = Boolean.TRUE;
+    private Boolean isActive;
 
     private String validationCode;
 
-    private LocalDateTime validationExpiry = LocalDateTime.now().plusHours(2);
+    private LocalDateTime validationExpiry;
 
-    private Boolean isAuthenticated = Boolean.FALSE;
+    private Boolean isAuthenticated;
 
     @CreationTimestamp
     private LocalDateTime registry;

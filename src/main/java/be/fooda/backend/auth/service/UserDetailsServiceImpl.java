@@ -30,23 +30,28 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         final Optional<UserEntity> oAuthenticatedUser = userRepository.findByLogin(username);
 
-        if (oAuthenticatedUser.isPresent()) {
-            final UserEntity authenticatedUser = oAuthenticatedUser.get();
-            if (authenticatedUser.getIsAuthenticated().equals(Boolean.TRUE)) {
-                // Remember that Spring needs roles to be in this format: "ROLE_" + userRole (i.e. "ROLE_ADMIN")
-                // So, we need to set it to that format, so we can verify and compare roles (i.e. hasRole("ADMIN")).
-                List<GrantedAuthority> grantedAuthorities = authenticatedUser.getRoles().stream()
-                        .map(userRole -> (GrantedAuthority) new SimpleGrantedAuthority("" + userRole))
-                        .collect(Collectors.toList());
+        if (!oAuthenticatedUser.isPresent())
+            // If user not found. Throw this exception.
+            throw new UsernameNotFoundException("Username: " + username + " not found");
 
-                // The "User" class is provided by Spring and represents a model class for user to be returned by UserDetailsService
-                // And used by auth manager to verify and check user authentication.
-                return new User(authenticatedUser.getLogin(), encoder.encode(authenticatedUser.getPassword()), grantedAuthorities);
-            } else {
-                throw new UsernameNotFoundException("Username: " + username + " unauthorized.");
-            }
-        }
-        // If user not found. Throw this exception.
-        throw new UsernameNotFoundException("Username: " + username + " not found");
+        if (oAuthenticatedUser.get().getIsAuthenticated().equals(Boolean.FALSE))
+            throw new UsernameNotFoundException("Username: " + username + " is unauthorized.");
+
+        // Remember that Spring needs roles to be in this format: "ROLE_" + userRole (i.e. "ROLE_ADMIN")
+        // So, we need to set it to that format, so we can verify and compare roles (i.e. hasRole("ADMIN")).
+        List<GrantedAuthority> grantedAuthorities = oAuthenticatedUser.get()
+                .getRoles()
+                .stream()
+                .map(userRole -> (GrantedAuthority) new SimpleGrantedAuthority("" + userRole))
+                .collect(Collectors.toList());
+
+        // The "User" class is provided by Spring and represents a model class for user to be returned by UserDetailsService
+        // And used by auth manager to verify and check user authentication.
+        return new User(
+                oAuthenticatedUser.get().getLogin(),
+                encoder.encode(oAuthenticatedUser.get().getPassword()),
+                grantedAuthorities
+        );
+
     }
 }
