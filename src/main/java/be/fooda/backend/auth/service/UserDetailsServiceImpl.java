@@ -2,6 +2,7 @@ package be.fooda.backend.auth.service;
 
 import be.fooda.backend.auth.dao.UserRepository;
 import be.fooda.backend.auth.model.entity.UserEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,26 +10,21 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Service   // It has to be annotated with @Service.
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
+@Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         if (userRepository.existsByLogin(username))
-            // If user not found. Throw this exception.
             throw new UsernameNotFoundException("Username: " + username + " not found");
 
         final UserEntity authenticatedUser = userRepository.getOneByLogin(username);
@@ -48,7 +44,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         // And used by auth manager to verify and check user authentication.
         return new User(
                 authenticatedUser.getLogin(),
-                passwordEncoder.encode(authenticatedUser.getPassword()),
+                authenticatedUser.getPassword(),
                 grantedAuthorities
         );
 
