@@ -20,6 +20,9 @@ import java.util.stream.Collectors;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Autowired
+    private BCryptPasswordEncoder encoder;
+
+    @Autowired
     private UserRepository userRepository;
 
     @Override
@@ -38,7 +41,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
                 // The "User" class is provided by Spring and represents a model class for user to be returned by UserDetailsService
                 // And used by auth manager to verify and check user authentication.
-                return new User(authenticatedUser.getLogin(), new BCryptPasswordEncoder().encode(authenticatedUser.getPassword()), grantedAuthorities);
+                return new User(authenticatedUser.getLogin(), encoder.encode(authenticatedUser.getPassword()), grantedAuthorities);
             } else {
                 throw new UsernameNotFoundException("Username: " + username + " unauthorized.");
             }

@@ -45,6 +45,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             throws AuthenticationException {
 
         try {
+
             // 1. Get credentials from request
             UserCredentials credentials = new ObjectMapper().readValue(request.getInputStream(), UserCredentials.class);
 
