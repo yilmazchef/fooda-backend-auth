@@ -3,11 +3,9 @@ package be.fooda.backend.auth.config;
 import be.fooda.backend.auth.security.JwtUsernameAndPasswordAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,12 +19,15 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    @Autowired
-    private JwtConfig jwtConfig;
+    private final JwtConfig jwtConfig = new JwtConfig();
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .requiresChannel()
+                .requestMatchers(r -> r.getHeader("X-Forwarded-Proto") != null)
+                .requiresSecure()
+                .and()
                 .csrf().disable()
                 // make sure we use stateless session; session won't be used to store user's state.
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -52,16 +53,7 @@ public class SecurityCredentialsConfig extends WebSecurityConfigurerAdapter {
     // In addition, we need to define the password encoder also. So, auth manager can compare and verify passwords.
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-    }
 
-    @Bean
-    public JwtConfig jwtConfig() {
-        return new JwtConfig();
-    }
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        auth.userDetailsService(userDetailsService).passwordEncoder(new BCryptPasswordEncoder());
     }
 }
