@@ -1,6 +1,7 @@
 package be.fooda.backend.auth.config;
 
-import be.fooda.backend.auth.security.JwtUsernameAndPasswordAuthenticationFilter;
+import be.fooda.backend.auth.controller.JwtUsernameAndPasswordAuthenticationFilter;
+import be.fooda.backend.auth.model.JwtConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

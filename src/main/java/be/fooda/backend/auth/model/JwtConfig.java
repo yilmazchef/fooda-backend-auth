@@ -1,4 +1,4 @@
-package be.fooda.backend.auth.config;
+package be.fooda.backend.auth.model;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;

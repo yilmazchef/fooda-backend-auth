@@ -1,12 +1,10 @@
-package be.fooda.backend.auth.security;
+package be.fooda.backend.auth.controller;
 
-import be.fooda.backend.auth.config.JwtConfig;
+import be.fooda.backend.auth.model.JwtConfig;
+import be.fooda.backend.auth.model.UserCredentials;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -82,13 +80,5 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
         response.addHeader(jwtConfig.getHeader(), jwtConfig.getPrefix() + token);
     }
 
-    // A (temporary) class just to represent the user credentials
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    private static class UserCredentials {
-        private String username;
-        private String password;
-    }
 }
 
