@@ -22,13 +22,17 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.basePackage("be.fooda.backend.auth")).paths(PathSelectors.any()).build().apiInfo(apiInfo())
-                .securitySchemes(securitySchemes()).securityContexts(Arrays.asList(securityContext()));
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select().apis(RequestHandlerSelectors.basePackage("be.fooda.backend.auth")).paths(PathSelectors.any())
+                .build()
+                .apiInfo(apiInfo())
+                .securitySchemes(securitySchemes())
+                .securityContexts(Collections.singletonList(securityContext()));
     }
 
     private ApiInfo apiInfo() {
-        return new ApiInfo("Fooda Authorization API", "Product API to perform CRUD opertations", "1.0", "Terms of service",
-                new Contact("Java Chinna", "www.javachinna.com", "java4chinna@gmail.com"), "License of API", "API license URL", Collections.emptyList());
+        return new ApiInfo("Fooda Authorization API", "Provides authentication for users.", "1.0", "Terms of service",
+                new Contact("Yilmaz Mustafa", "yilmazchef.github.io", "yilmaz@mail.be"), "Free licence", "https://www.apache.org/licenses/", Collections.emptyList());
     }
 
     private List<SecurityScheme> securitySchemes() {
@@ -39,7 +43,7 @@ public class SwaggerConfig {
         return SecurityContext
                 .builder()
                 .securityReferences(Arrays.asList(basicAuthReference(), bearerAuthReference()))
-                .forPaths(PathSelectors.ant("/products/**")).build();
+                .forPaths(PathSelectors.ant("/module_name/**")).build();
     }
 
     private SecurityReference basicAuthReference() {
